@@ -1,0 +1,29 @@
+#!/usr/bin/nft -f
+# archydots firewall - Arch's "simple & safe" ruleset, with SSH narrowed to
+# the home LAN. Installed to /etc/nftables.conf (nftables.service).
+#
+# Nothing comes in unless it answers something this laptop started - except
+# ping, IPv6's own housekeeping, and SSH from home. On any other network
+# (cafe, hotel, work) port 22 is closed even though sshd runs.
+define home_lan = 192.168.10.0/24
+
+destroy table inet filter
+table inet filter {
+  chain input {
+    type filter hook input priority filter
+    policy drop
+
+    ct state invalid drop comment "early drop of invalid connections"
+    ct state {established, related} accept comment "allow tracked connections"
+    iif lo accept comment "allow from loopback"
+    meta l4proto { icmp, icmpv6 } accept comment "allow icmp (IPv6 needs it to work at all)"
+    ip6 saddr fe80::/10 udp dport 546 accept comment "DHCPv6 replies"
+    ip saddr $home_lan tcp dport ssh accept comment "sshd - home LAN only"
+    pkttype host limit rate 5/second counter reject with icmpx type admin-prohibited
+    counter
+  }
+  chain forward {
+    type filter hook forward priority filter
+    policy drop
+  }
+}

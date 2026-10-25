@@ -1,0 +1,14 @@
+# nft-patrol configuration: /etc/nft-patrol/config.toml
+# Optional - nft-patrol works without it. Everything here is a default.
+
+# Colours: auto (when the output is a terminal and NO_COLOR is unset),
+# always or never. --color overrides it.
+color = "auto"
+
+# Names for address ranges, shown next to them wherever they appear:
+# "Allow SSH (tcp 22) from 192.168.10.0/24 (home LAN)". Without one, a range
+# an interface is on right now is "the network on wlan0", and well-known
+# ranges are named (private network, link-local, Tailscale, loopback).
+[networks]
+# "home LAN" = "192.168.10.0/24"
+# "tailnet"  = "100.64.0.0/10"

@@ -1,0 +1,14 @@
+nft-patrol (Rust)
+Copyright (C) 2026 nft-patrol contributors
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version. See LICENSE for the full text.
+
+Credits
+-------
+
+nft-patrol reads the firewall through nft(8), from the nftables project
+(https://netfilter.org/projects/nftables/), and shares its look and
+structure with btrfs-patrol-rs (https://github.com/jccl1706/btrfs-patrol-rs).

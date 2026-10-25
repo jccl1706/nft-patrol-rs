@@ -1,0 +1,48 @@
+# Maintainer: jc <jccl1706@gmail.com>
+pkgname=nft-patrol-git
+_pkgname=nft-patrol
+_repo=nft-patrol-rs
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="nftables firewall dashboard for Arch Linux: rules in plain words, exposed ports, blocked traffic"
+arch=('x86_64')
+url="https://github.com/jccl1706/nft-patrol-rs"
+license=('GPL-3.0-or-later')
+depends=('nftables' 'util-linux' 'iproute2' 'gcc-libs' 'glibc')
+makedepends=('cargo' 'git')
+provides=("$_pkgname")
+conflicts=("$_pkgname")
+source=("$_repo::git+$url.git")
+sha256sums=('SKIP')
+options=(!lto !debug)
+
+pkgver() {
+  cd "$_repo"
+  printf "%s.r%s.g%s" "$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)" \
+    "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "$_repo"
+  export RUSTUP_TOOLCHAIN=stable
+  cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
+}
+
+build() {
+  cd "$_repo"
+  export RUSTUP_TOOLCHAIN=stable CARGO_TARGET_DIR=target
+  cargo build --frozen --release
+}
+
+check() {
+  cd "$_repo"
+  export RUSTUP_TOOLCHAIN=stable
+  cargo test --frozen
+}
+
+package() {
+  cd "$_repo"
+  install -Dm755 target/release/nft-patrol -t "$pkgdir/usr/bin/"
+  install -Dm644 config.toml.example README.md -t "$pkgdir/usr/share/doc/$_pkgname/"
+  install -Dm644 NOTICE -t "$pkgdir/usr/share/licenses/$pkgname/"
+}
