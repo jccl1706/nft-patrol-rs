@@ -9,6 +9,7 @@ arch=('x86_64')
 url="https://github.com/jccl1706/nft-patrol-rs"
 license=('GPL-3.0-or-later')
 depends=('nftables' 'util-linux' 'iproute2' 'gcc-libs' 'glibc')
+optdepends=('polkit: pkexec nft-patrol, with the password asked in a window')
 makedepends=('cargo' 'git')
 provides=("$_pkgname")
 conflicts=("$_pkgname")
@@ -43,6 +44,8 @@ check() {
 package() {
   cd "$_repo"
   install -Dm755 target/release/nft-patrol -t "$pkgdir/usr/bin/"
+  # pkexec /usr/bin/nft-patrol: the password prompt's own words
+  install -Dm644 data/polkit/io.github.jccl1706.nft-patrol.policy -t "$pkgdir/usr/share/polkit-1/actions/"
   install -Dm644 config.toml.example README.md -t "$pkgdir/usr/share/doc/$_pkgname/"
   install -Dm644 NOTICE -t "$pkgdir/usr/share/licenses/$pkgname/"
 }

@@ -28,9 +28,15 @@ makepkg -si                    # builds, runs the tests, installs nft-patrol-git
 
 ```sh
 sudo nft-patrol                # the dashboard, live: the kernel's ruleset, hit counts
+pkexec /usr/bin/nft-patrol     # the same, with the password asked by the desktop's polkit agent
 nft-patrol                     # without root: /etc/nftables.conf, as written
 nft-patrol -f other.nft        # any nftables file, before you load it
 ```
+
+From a desktop launcher, run it in a terminal as `pkexec /usr/bin/nft-patrol`:
+the package's polkit action (`io.github.jccl1706.nft-patrol`) has the
+password asked in the desktop's own window - "Authentication is required to
+view and change the firewall" - rather than at a `sudo` prompt.
 
 Reading the live ruleset needs root. Without it, nft-patrol shows
 `/etc/nftables.conf` instead: the file is loaded into a private, empty
